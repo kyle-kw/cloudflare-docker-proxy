@@ -115,9 +115,14 @@ async function handleRequest(request) {
   }
   // foward requests
   const newUrl = new URL(upstream + url.pathname);
+  const headers = new Headers(request.headers);
+  // /v2/lobehub/lobe-chat/blobs/sha256:REDACTED
+  if (url.pathname.includes("blobs/sha256")) {
+    headers.set('x-amz-content-sha256', 'UNSIGNED-PAYLOAD');
+  }
   const newReq = new Request(newUrl, {
     method: request.method,
-    headers: request.headers,
+    headers: headers,
     redirect: "follow",
   });
   const resp = await fetch(newReq);
